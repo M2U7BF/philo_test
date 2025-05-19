@@ -2,7 +2,7 @@
 
 # テストフラグ
 use_func_test=1
-arg_test=0
+arg_test=1
 main_test=1
 
 make re
@@ -27,16 +27,36 @@ if [ $arg_test -eq 1 ]; then
   # time_to_eat
   # time_to_sleep
   # [number_of_times_each_philosopher_must_eat]
-  # 渡す値の種類と、渡す個数
+
+  # 引数の個数：少ない
   valgrind --leak-check=full --show-leak-kinds=all -q ./philo
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 1
+  if [ $? -ne 1 ]; then echo NG; fi
+
   valgrind --leak-check=full --show-leak-kinds=all -q ./philo a
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 0
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo -1
-  # INT_MAX以上
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 2147483648
-  # INT_MIN以下
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo -2147483649
+  if [ $? -ne 1 ]; then echo NG; fi
+
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo a a a
+  if [ $? -ne 1 ]; then echo NG; fi
+
+  # 引数の個数：多い
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 1 1 1 1 1 1
+  if [ $? -ne 1 ]; then echo NG; fi
+
+  # 引数の値の種類：数値以外
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo a a a a
+  if [ $? -ne 1 ]; then echo NG; fi
+
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo a a a a a
+  if [ $? -ne 1 ]; then echo NG; fi
+
+  # 引数の値の種類：INT_MAX以上
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 2147483648 2147483648 2147483648 2147483648 2147483648
+  if [ $? -ne 1 ]; then echo NG; fi
+
+  # 引数の値の種類：負数
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo -1 -1 -1 -1 -1
+  if [ $? -ne 1 ]; then echo NG; fi
+
   echo ""
 fi
 

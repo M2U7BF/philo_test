@@ -2,15 +2,17 @@
 
 # テストフラグ
 use_func_test=1
-arg_test=1
+norm_test=1
+arg_test=0
 main_test=1
 
 check_exit_status()
 {
-  if [ $? -ne $1 ]; then echo NG; else echo OK; fi
+  if [ $? -ne $1 ]; then echo "NG🔥"; else echo OK; fi
 }
 
-make re
+make fclean
+make debug
 if [ $? -ne 0 ]; then
   exit 1
 fi
@@ -20,6 +22,13 @@ if [ $use_func_test -eq 1 ]; then
   echo "使用関数のチェック -------------------------------------------"
   nm -u ./philo | grep GLIBC | grep -v -E '__libc_start_main|memset|printf|malloc|free|write|usleep|gettimeofday|pthread_create|pthread_detach|pthread_join|pthread_mutex_init|pthread_mutex_destroy|pthread_mutex_lock|pthread_mutex_unlock'
   check_exit_status 1
+  echo ""
+fi
+
+if [ $norm_test -eq 1 ]; then
+  echo "norminetteのチェック -------------------------------------------"
+  norminette
+  check_exit_status 0
   echo ""
 fi
 
@@ -71,9 +80,16 @@ if [ $arg_test -eq 1 ]; then
   echo ""
 fi
 
-# メインの処理で、0のとき動くか。ft_atoiに不安あり
+# TODO メインの処理で、0のとき動くか。ft_atoiに不安あり
 if [ $main_test -eq 1 ]; then
   echo "メイン処理のチェック -------------------------------------------"
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo
+  # ./philo \
+  #   number_of_philosophers \
+  #   time_to_die \
+  #   time_to_eat \
+  #   time_to_sleep \
+  #   [number_of_times_each_philosopher_must_eat]
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 3 1 1 1000
+  check_exit_status 0
   echo ""
 fi

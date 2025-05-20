@@ -83,13 +83,35 @@ fi
 # TODO メインの処理で、0のとき動くか。ft_atoiに不安あり
 if [ $main_test -eq 1 ]; then
   echo "メイン処理のチェック -------------------------------------------"
+  # 実行時の構文：
   # ./philo \
   #   number_of_philosophers \
   #   time_to_die \
   #   time_to_eat \
   #   time_to_sleep \
   #   [number_of_times_each_philosopher_must_eat]
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 3 1 1 1000
+
+  echo "-- number_of_times_each_philosopher_must_eatなし --"
+  number_of_philosophers=1
+  time_to_die=1
+  time_to_eat=1
+  time_to_sleep=1000
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo \
+    $number_of_philosophers \
+    $time_to_die \
+    $time_to_eat \
+    $time_to_sleep
+  check_exit_status 0
+  echo ""
+
+  echo "-- number_of_times_each_philosopher_must_eatあり --"
+  number_of_times_each_philosopher_must_eat=20
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo \
+    $number_of_philosophers \
+    $time_to_die \
+    $time_to_eat \
+    $time_to_sleep \
+    $number_of_times_each_philosopher_must_eat
   check_exit_status 0
   echo ""
 fi

@@ -11,6 +11,17 @@ check_exit_status()
   if [ $? -ne $1 ]; then echo "NG🔥"; else echo OK; fi
 }
 
+philo()
+{
+  echo "リークテスト"
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo "$@"
+  echo ""
+
+  echo "データ競合テスト"
+  valgrind --tool=helgrind ./philo "$@"
+  echo ""
+}
+
 make fclean
 make debug
 if [ $? -ne 0 ]; then
@@ -36,45 +47,45 @@ if [ $arg_test -eq 1 ]; then
   echo "引数エラーのチェック -------------------------------------------"
 
   # 引数の個数：少ない
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo
+  philo
   check_exit_status 1
 
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo a
+  philo a
   check_exit_status 1
 
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo a a a
+  philo a a a
   check_exit_status 1
 
   # 引数の個数：多い
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 1 1 1 1 1 1
+  philo 1 1 1 1 1 1
   check_exit_status 1
 
   # 引数の値の種類：数値以外
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo a a a a
+  philo a a a a
   check_exit_status 1
 
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo a a a a a
+  philo a a a a a
   check_exit_status 1
 
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 1 a a a a
+  philo 1 a a a a
   check_exit_status 1
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 1 1 a a a
+  philo 1 1 a a a
   check_exit_status 1
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 1 1 1 a a
+  philo 1 1 1 a a
   check_exit_status 1
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 1 1 1 1 a
+  philo 1 1 1 1 a
   check_exit_status 1
 
   # 引数の値の種類：小数点
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 0.321 0.321 0.321 0.321 0.321
+  philo 0.321 0.321 0.321 0.321 0.321
   check_exit_status 1
 
   # 引数の値の種類：INT_MAX以上
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo 2147483648 2147483648 2147483648 2147483648 2147483648
+  philo 2147483648 2147483648 2147483648 2147483648 2147483648
   check_exit_status 1
 
   # 引数の値の種類：負数
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo -1 -1 -1 -1 -1
+  philo -1 -1 -1 -1 -1
   check_exit_status 1
 
   echo ""
@@ -92,11 +103,11 @@ if [ $main_test -eq 1 ]; then
   #   [number_of_times_each_philosopher_must_eat]
 
   echo "-- number_of_times_each_philosopher_must_eatなし --"
-  number_of_philosophers=1
-  time_to_die=1
-  time_to_eat=1
-  time_to_sleep=1000
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo \
+  number_of_philosophers=5
+  time_to_die=800
+  time_to_eat=200
+  time_to_sleep=200
+  philo \
     $number_of_philosophers \
     $time_to_die \
     $time_to_eat \
@@ -105,8 +116,8 @@ if [ $main_test -eq 1 ]; then
   echo ""
 
   echo "-- number_of_times_each_philosopher_must_eatあり --"
-  number_of_times_each_philosopher_must_eat=20
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo \
+  number_of_times_each_philosopher_must_eat=7
+  philo \
     $number_of_philosophers \
     $time_to_die \
     $time_to_eat \

@@ -13,6 +13,9 @@ check_exit_status()
 
 philo()
 {
+  # -fsanitize=threadフラグを使用する場合は下記で実行する模様。だがうまく動かない（2025/05/22）
+  # setarch $(uname -m) -R ./philo ...
+
   echo "リークテスト"
   valgrind --leak-check=full --show-leak-kinds=all -q ./philo "$@"
   echo ""

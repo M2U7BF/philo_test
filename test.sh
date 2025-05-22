@@ -5,11 +5,12 @@ use_func_test=1
 norm_test=1
 func_test=0
 arg_test=0
-main_test=1
+main_test=0
+tester_test=1
 
 check_exit_status()
 {
-  if [ $? -ne $1 ]; then echo "NG🔥"; else echo OK; fi
+  if [ $? -ne $1 ]; then echo "exit: NG🔥"; else echo "exit: OK"; fi
 }
 
 philo()
@@ -22,7 +23,10 @@ philo()
   echo "execution: ./philo $@"
   echo ""
 
-  echo "-- リークテスト --"
+  echo "-- 通常実行 --"
+  ./philo "$@"
+  check_exit_status $expected_status
+  echo ""
 
   echo "-- リークテスト --"
   # setarch $(uname -m) -R 
@@ -134,4 +138,12 @@ if [ $main_test -eq 1 ]; then
     $time_to_sleep \
     $number_of_times_each_philosopher_must_eat
   echo ""
+fi
+
+if [ $tester_test -eq 1 ]; then
+  echo "テスターのテスト -------------------------------------------"
+  test -d philosophers_tester || git clone https://github.com/AntonioSebastiaoPedro/philosophers_tester.git
+  philosophers_tester/philo_tester.sh -a
+  philosophers_tester/philo_tester.sh -d
+  philosophers_tester/philo_tester.sh -l
 fi

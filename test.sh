@@ -3,10 +3,10 @@
 # テストフラグ
 use_func_test=1
 norm_test=1
-func_test=0
+func_test=1
 arg_test=0
 main_test=0
-tester_test=1
+tester_test=0
 
 check_exit_status()
 {
@@ -95,7 +95,7 @@ if [ $arg_test -eq 1 ]; then
   philo 1 1 1 1 1 a
 
   # 引数の値の種類：小数点
-  philo 1 0.321 0.321 0.321 0.321 0.321
+  philo 0 0.321 0.321 0.321 0.321 0.321
 
   # 引数の値の種類：INT_MAX以上
   philo 1 2147483648 2147483648 2147483648 2147483648 2147483648

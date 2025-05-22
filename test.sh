@@ -23,11 +23,15 @@ philo()
   echo ""
 
   echo "-- リークテスト --"
+
+  echo "-- リークテスト --"
+  # setarch $(uname -m) -R 
   valgrind --leak-check=full --show-leak-kinds=all -q ./philo "$@"
   check_exit_status $expected_status
   echo ""
 
   echo "-- データ競合テスト --"
+  # setarch $(uname -m) -R 
   valgrind --tool=helgrind -q ./philo "$@"
   check_exit_status $expected_status
   echo ""

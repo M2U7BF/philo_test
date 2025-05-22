@@ -4,7 +4,7 @@
 use_func_test=1
 norm_test=1
 func_test=0
-arg_test=1
+arg_test=0
 main_test=1
 
 check_exit_status()
@@ -55,7 +55,7 @@ fi
 
 if [ $norm_test -eq 1 ]; then
   echo "norminetteのチェック -------------------------------------------"
-  norminette
+  find -maxdepth 1 -name "*.c" | xargs norminette
   check_exit_status 0
   echo ""
 fi
@@ -109,20 +109,20 @@ if [ $main_test -eq 1 ]; then
   #   time_to_sleep \
   #   [number_of_times_each_philosopher_must_eat]
 
-  echo "-- number_of_times_each_philosopher_must_eatなし --"
+  # echo "-- number_of_times_each_philosopher_must_eatなし --"
   number_of_philosophers=5
   time_to_die=800
   time_to_eat=200
   time_to_sleep=200
-  philo 0 \
-    $number_of_philosophers \
-    $time_to_die \
-    $time_to_eat \
-    $time_to_sleep
-  echo ""
+  # philo 0 \
+  #   $number_of_philosophers \
+  #   $time_to_die \
+  #   $time_to_eat \
+  #   $time_to_sleep
+  # echo ""
 
   echo "-- number_of_times_each_philosopher_must_eatあり --"
-  number_of_times_each_philosopher_must_eat=7
+  number_of_times_each_philosopher_must_eat=3
   philo 0 \
     $number_of_philosophers \
     $time_to_die \

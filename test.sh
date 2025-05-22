@@ -3,9 +3,9 @@
 # テストフラグ
 use_func_test=1
 norm_test=1
-func_test=1
-arg_test=0
-main_test=0
+func_test=0
+arg_test=1
+main_test=1
 
 check_exit_status()
 {
@@ -16,13 +16,20 @@ philo()
 {
   # -fsanitize=threadフラグを使用する場合は下記で実行する模様。だがうまく動かない（2025/05/22）
   # setarch $(uname -m) -R ./philo ...
+  expected_status=$1
+  shift 1
 
-  echo "リークテスト"
-  valgrind --leak-check=full --show-leak-kinds=all -q ./philo "$@"
+  echo "execution: ./philo $@"
   echo ""
 
-  echo "データ競合テスト"
-  valgrind --tool=helgrind ./philo "$@"
+  echo "-- リークテスト --"
+  valgrind --leak-check=full --show-leak-kinds=all -q ./philo "$@"
+  check_exit_status $expected_status
+  echo ""
+
+  echo "-- データ競合テスト --"
+  valgrind --tool=helgrind -q ./philo "$@"
+  check_exit_status $expected_status
   echo ""
 }
 
@@ -64,46 +71,29 @@ if [ $arg_test -eq 1 ]; then
   echo "引数エラーのチェック -------------------------------------------"
 
   # 引数の個数：少ない
-  philo
-  check_exit_status 1
-
-  philo a
-  check_exit_status 1
-
-  philo a a a
-  check_exit_status 1
+  philo 1
+  philo 1 a
+  philo 1 a a a
 
   # 引数の個数：多い
-  philo 1 1 1 1 1 1
-  check_exit_status 1
+  philo 1 1 1 1 1 1 1
 
   # 引数の値の種類：数値以外
-  philo a a a a
-  check_exit_status 1
-
-  philo a a a a a
-  check_exit_status 1
-
   philo 1 a a a a
-  check_exit_status 1
-  philo 1 1 a a a
-  check_exit_status 1
-  philo 1 1 1 a a
-  check_exit_status 1
-  philo 1 1 1 1 a
-  check_exit_status 1
+  philo 1 a a a a a
+  philo 1 1 a a a a
+  philo 1 1 1 a a a
+  philo 1 1 1 1 a a
+  philo 1 1 1 1 1 a
 
   # 引数の値の種類：小数点
-  philo 0.321 0.321 0.321 0.321 0.321
-  check_exit_status 1
+  philo 1 0.321 0.321 0.321 0.321 0.321
 
   # 引数の値の種類：INT_MAX以上
-  philo 2147483648 2147483648 2147483648 2147483648 2147483648
-  check_exit_status 1
+  philo 1 2147483648 2147483648 2147483648 2147483648 2147483648
 
   # 引数の値の種類：負数
-  philo -1 -1 -1 -1 -1
-  check_exit_status 1
+  philo 1 -1 -1 -1 -1 -1
 
   echo ""
 fi
@@ -124,22 +114,20 @@ if [ $main_test -eq 1 ]; then
   time_to_die=800
   time_to_eat=200
   time_to_sleep=200
-  philo \
+  philo 0 \
     $number_of_philosophers \
     $time_to_die \
     $time_to_eat \
     $time_to_sleep
-  check_exit_status 0
   echo ""
 
   echo "-- number_of_times_each_philosopher_must_eatあり --"
   number_of_times_each_philosopher_must_eat=7
-  philo \
+  philo 0 \
     $number_of_philosophers \
     $time_to_die \
     $time_to_eat \
     $time_to_sleep \
     $number_of_times_each_philosopher_must_eat
-  check_exit_status 0
   echo ""
 fi

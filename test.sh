@@ -3,8 +3,9 @@
 # テストフラグ
 use_func_test=1
 norm_test=1
+func_test=1
 arg_test=0
-main_test=1
+main_test=0
 
 check_exit_status()
 {
@@ -26,7 +27,13 @@ philo()
 }
 
 make fclean
-make debug
+make -n debug
+if [ $? -eq 0 ]; then
+  rm -f philo.a
+  make debug
+else
+  make
+fi
 if [ $? -ne 0 ]; then
   exit 1
 fi
@@ -42,6 +49,13 @@ fi
 if [ $norm_test -eq 1 ]; then
   echo "norminetteのチェック -------------------------------------------"
   norminette
+  check_exit_status 0
+  echo ""
+fi
+
+if [ $func_test -eq 1 ]; then
+  echo "メイン以外の基本関数のテスト -------------------------------------------"
+  cc -o ./func_test philo_test/test_main.c philo.a && ./func_test
   check_exit_status 0
   echo ""
 fi

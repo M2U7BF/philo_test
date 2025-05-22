@@ -4,7 +4,7 @@
 use_func_test=1
 norm_test=1
 func_test=1
-arg_test=0
+arg_test=1
 main_test=0
 tester_test=0
 
@@ -106,7 +106,6 @@ if [ $arg_test -eq 1 ]; then
   echo ""
 fi
 
-# TODO メインの処理で、0のとき動くか。ft_atoiに不安あり
 if [ $main_test -eq 1 ]; then
   echo "メイン処理のチェック -------------------------------------------"
   # 実行時の構文：

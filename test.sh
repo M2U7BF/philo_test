@@ -3,10 +3,11 @@
 # テストフラグ
 use_func_test=1
 norm_test=1
-func_test=1
-arg_test=1
+func_test=0
+arg_test=0
 main_test=0
 tester_test=0
+tester_test2=1
 
 check_exit_status()
 {
@@ -145,4 +146,12 @@ if [ $tester_test -eq 1 ]; then
   philosophers_tester/philo_tester.sh -a
   philosophers_tester/philo_tester.sh -d
   philosophers_tester/philo_tester.sh -l
+fi
+
+if [ $tester_test2 -eq 1 ]; then
+  echo "テスター2のテスト -------------------------------------------"
+  test -d LazyPhilosophersTester || git clone https://github.com/MichelleJiam/LazyPhilosophersTester.git
+  cd LazyPhilosophersTester
+  ./test.sh ../philo
+  cd -
 fi

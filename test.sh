@@ -1,4 +1,6 @@
 #!/bin/bash
+PROG_NAME=philo
+source "./${PROG_NAME}_test/test_util.sh"
 
 # テストフラグ
 use_func_test=1
@@ -42,18 +44,7 @@ philo()
   echo ""
 }
 
-make fclean
-make -n debug
-if [ $? -eq 0 ]; then
-  rm -f philo.a
-  make debug
-else
-  make
-fi
-if [ $? -ne 0 ]; then
-  exit 1
-fi
-echo ""
+make_mandatory
 
 if [ $use_func_test -eq 1 ]; then
   echo "使用関数のチェック -------------------------------------------"
